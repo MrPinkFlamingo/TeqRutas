@@ -81,10 +81,10 @@ class AuthViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     fun logout() {
+        _usuarioActual.value = null
+        _loginState.value    = LoginUiState.Idle
         viewModelScope.launch {
             sessionStore.cerrarSesion()
-            _usuarioActual.value = null
-            _loginState.value    = LoginUiState.Idle
         }
     }
 

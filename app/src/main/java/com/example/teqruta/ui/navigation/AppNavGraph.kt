@@ -1,6 +1,7 @@
 package com.example.teqruta.ui.navigation
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.navigation.NavHostController
@@ -59,7 +60,8 @@ fun AppNavGraph(
 
         // ── W-02 / W-04: HOME TÉCNICO & HISTORIAL ─────────────────────────────
         composable(Rutas.HOME_TECNICO) {
-            usuarioActual?.let { user ->
+            val user = usuarioActual
+            if (user != null) {
                 HomeTecnicoScreen(
                     usuario = user,
                     viewModel = trasladoViewModel,
@@ -69,21 +71,37 @@ fun AppNavGraph(
                     onLogout = {
                         authViewModel.logout()
                         navController.navigate(Rutas.LOGIN) {
-                            popUpTo(0) { inclusive = true }
+                            popUpTo(0)
+                            launchSingleTop = true
                         }
                     }
                 )
+            } else {
+                LaunchedEffect(Unit) {
+                    navController.navigate(Rutas.LOGIN) {
+                        popUpTo(0)
+                        launchSingleTop = true
+                    }
+                }
             }
         }
 
         // ── W-02: NUEVO TRASLADO ──────────────────────────────────────────────
         composable(Rutas.NUEVO_TRASLADO) {
-            usuarioActual?.let { user ->
+            val user = usuarioActual
+            if (user != null) {
                 NuevoTrasladoScreen(
                     usuario = user,
                     viewModel = trasladoViewModel,
                     onVolver = { navController.popBackStack() }
                 )
+            } else {
+                LaunchedEffect(Unit) {
+                    navController.navigate(Rutas.LOGIN) {
+                        popUpTo(0)
+                        launchSingleTop = true
+                    }
+                }
             }
         }
 
@@ -102,7 +120,8 @@ fun AppNavGraph(
 
         // ── W-05: HOME JEFE (BANDEJA VALIDACIÓN) ──────────────────────────────
         composable(Rutas.HOME_JEFE) {
-            usuarioActual?.let { user ->
+            val user = usuarioActual
+            if (user != null) {
                 HomeJefeScreen(
                     usuario = user,
                     viewModel = trasladoViewModel,
@@ -111,10 +130,18 @@ fun AppNavGraph(
                     onLogout = {
                         authViewModel.logout()
                         navController.navigate(Rutas.LOGIN) {
-                            popUpTo(0) { inclusive = true }
+                            popUpTo(0)
+                            launchSingleTop = true
                         }
                     }
                 )
+            } else {
+                LaunchedEffect(Unit) {
+                    navController.navigate(Rutas.LOGIN) {
+                        popUpTo(0)
+                        launchSingleTop = true
+                    }
+                }
             }
         }
 
@@ -133,7 +160,8 @@ fun AppNavGraph(
 
         // ── W-07: DASHBOARD GERENCIA ──────────────────────────────────────────
         composable(Rutas.DASHBOARD) {
-            usuarioActual?.let { user ->
+            val user = usuarioActual
+            if (user != null) {
                 DashboardGerenciaScreen(
                     usuario = user,
                     viewModel = trasladoViewModel,
@@ -141,16 +169,25 @@ fun AppNavGraph(
                     onLogout = {
                         authViewModel.logout()
                         navController.navigate(Rutas.LOGIN) {
-                            popUpTo(0) { inclusive = true }
+                            popUpTo(0)
+                            launchSingleTop = true
                         }
                     }
                 )
+            } else {
+                LaunchedEffect(Unit) {
+                    navController.navigate(Rutas.LOGIN) {
+                        popUpTo(0)
+                        launchSingleTop = true
+                    }
+                }
             }
         }
 
         // ── W-08: MANTENEDORES ADMIN ──────────────────────────────────────────
         composable(Rutas.HOME_ADMIN) {
-            usuarioActual?.let { user ->
+            val user = usuarioActual
+            if (user != null) {
                 MantenedoresAdminScreen(
                     usuario = user,
                     viewModel = trasladoViewModel,
@@ -158,10 +195,18 @@ fun AppNavGraph(
                     onLogout = {
                         authViewModel.logout()
                         navController.navigate(Rutas.LOGIN) {
-                            popUpTo(0) { inclusive = true }
+                            popUpTo(0)
+                            launchSingleTop = true
                         }
                     }
                 )
+            } else {
+                LaunchedEffect(Unit) {
+                    navController.navigate(Rutas.LOGIN) {
+                        popUpTo(0)
+                        launchSingleTop = true
+                    }
+                }
             }
         }
     }

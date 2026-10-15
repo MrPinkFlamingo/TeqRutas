@@ -42,8 +42,11 @@ fun LoginScreen(
 
     // Navegar cuando el login es exitoso
     LaunchedEffect(loginState) {
-        if (loginState is LoginUiState.Success) {
-            onLoginExitoso((loginState as LoginUiState.Success).usuario)
+        val state = loginState
+        if (state is LoginUiState.Success) {
+            val user = state.usuario
+            authViewModel.resetearEstado()
+            onLoginExitoso(user)
         }
     }
 

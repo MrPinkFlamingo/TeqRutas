@@ -171,10 +171,8 @@ fun LoginScreen(
             Column(modifier = Modifier.padding(16.dp)) {
                 Text("👤 Usuarios de prueba:", style = MaterialTheme.typography.labelLarge, color = AzulPrimario)
                 Spacer(modifier = Modifier.height(4.dp))
-                Text("Técnico:  tecnico@teqmed.cl / 1234", style = MaterialTheme.typography.bodyMedium)
-                Text("Jefe:     jefe@teqmed.cl / 1234",    style = MaterialTheme.typography.bodyMedium)
-                Text("Gerencia: gerencia@teqmed.cl / 1234", style = MaterialTheme.typography.bodyMedium)
-                Text("Admin:    admin@teqmed.cl / 1234",    style = MaterialTheme.typography.bodyMedium)
+                Text("Técnico en Terreno: tecnico@teqmed.cl / 1234", style = MaterialTheme.typography.bodyMedium)
+                Text("Jefe de Operaciones: jefe@teqmed.cl / 1234", style = MaterialTheme.typography.bodyMedium)
             }
         }
     }

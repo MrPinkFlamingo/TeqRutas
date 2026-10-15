@@ -18,12 +18,12 @@ Reemplaza los métodos manuales en papel por un sistema digital automatizado con
 
 La base de datos local SQLite (Room) se autosemilla en el primer inicio con los siguientes usuarios (todos con contraseña `1234`):
 
-| Rol | Usuario / Correo | Contraseña | Funcionalidades Principales |
+| Rol | Usuario / Correo | Contraseña | Funcionalidades de la Evaluación Parcial 2 |
 | :--- | :--- | :--- | :--- |
-| **Técnico** | `tecnico@teqmed.cl` o `12345678-9` | `1234` | Iniciar viaje, odómetro inicial, finalizar viaje con odómetro final, peajes, **Cámara** y **GPS**. |
-| **Jefe de Servicio** | `jefe@teqmed.cl` o `98765432-1` | `1234` | Bandeja de auditoría, filtro de viajes con desviación (>15%), aprobación o ajuste a km oficial. |
-| **Gerencia / Finanzas** | `gerencia@teqmed.cl` o `11111111-1` | `1234` | Dashboard financiero, proporción combustible vs peajes, filtros por vehículo, exportación de reportes. |
-| **Administrador** | `admin@teqmed.cl` o `22222222-2` | `1234` | Mantenedores de vehículos, clínicas/tramos y actualización de tarifa de combustible desde API pública CNE/ENAP. |
+| **Técnico** | `tecnico@teqmed.cl` o `12345678-9` | `1234` | Iniciar viaje, odómetro inicial, finalizar viaje con odómetro final, peajes, **Cámara nativa** (foto odómetro) y **GPS nativo** (coordenadas). |
+| **Jefe de Operaciones** | `jefe@teqmed.cl` o `98765432-1` | `1234` | Bandeja de auditoría, filtro de viajes con desviación (>15%), aprobación o ajuste a km oficial. |
+
+*(Nota: Los roles de Gerencia y Administrador corresponden a los hitos de la entrega final EFT).*
 
 ---
 
@@ -39,7 +39,7 @@ La aplicación sigue estrictamente el patrón de arquitectura recomendado por Go
   - `SessionDataStore`: Persistencia de sesión con Jetpack DataStore Preferences.
 - **ViewModel:**
   - `AuthViewModel`: Controla `LoginUiState` (Idle, Loading, Success, Error) y persistencia de sesión.
-  - `TrasladoViewModel`: Estados reactivos desacoplados (`formNuevoState`, `formFinalizarState`, `dashboardUiState`, `adminState`). Validación en ViewModel sin acoplamiento a la UI.
+  - `TrasladoViewModel`: Estados reactivos desacoplados (`formNuevoState`, `formFinalizarState`). Validación centralizada en ViewModel sin acoplamiento a la UI.
 - **View:**
   - Interfaz 100% declarativa con **Jetpack Compose** y **Material Design 3**.
   - Sin lógica de negocio ni cálculos en las vistas.

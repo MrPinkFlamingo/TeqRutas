@@ -10,8 +10,6 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.example.teqruta.data.model.Rol
-import com.example.teqruta.ui.screens.admin.MantenedoresAdminScreen
-import com.example.teqruta.ui.screens.gerencia.DashboardGerenciaScreen
 import com.example.teqruta.ui.screens.jefe.DetalleValidacionScreen
 import com.example.teqruta.ui.screens.jefe.HomeJefeScreen
 import com.example.teqruta.ui.screens.login.LoginScreen
@@ -41,16 +39,10 @@ fun AppNavGraph(
                 estaOnline = estaOnline,
                 onLoginExitoso = { usuario ->
                     when (usuario.rol) {
-                        Rol.TECNICO -> controladorNavegacion.navigate(Rutas.HOME_TECNICO) {
+                        Rol.TECNICO, Rol.GERENCIA, Rol.ADMINISTRADOR -> controladorNavegacion.navigate(Rutas.HOME_TECNICO) {
                             popUpTo(Rutas.LOGIN) { inclusive = true }
                         }
                         Rol.JEFE -> controladorNavegacion.navigate(Rutas.HOME_JEFE) {
-                            popUpTo(Rutas.LOGIN) { inclusive = true }
-                        }
-                        Rol.GERENCIA -> controladorNavegacion.navigate(Rutas.DASHBOARD) {
-                            popUpTo(Rutas.LOGIN) { inclusive = true }
-                        }
-                        Rol.ADMINISTRADOR -> controladorNavegacion.navigate(Rutas.HOME_ADMIN) {
                             popUpTo(Rutas.LOGIN) { inclusive = true }
                         }
                     }
@@ -156,58 +148,6 @@ fun AppNavGraph(
                 viewModel = trasladoViewModel,
                 onVolver = { controladorNavegacion.popBackStack() }
             )
-        }
-
-        // ── W-07: DASHBOARD GERENCIA ──────────────────────────────────────────
-        composable(Rutas.DASHBOARD) {
-            val usuario = usuarioActual
-            if (usuario != null) {
-                DashboardGerenciaScreen(
-                    usuario = usuario,
-                    viewModel = trasladoViewModel,
-                    estaOnline = estaOnline,
-                    onLogout = {
-                        authViewModel.logout()
-                        controladorNavegacion.navigate(Rutas.LOGIN) {
-                            popUpTo(0)
-                            launchSingleTop = true
-                        }
-                    }
-                )
-            } else {
-                LaunchedEffect(Unit) {
-                    controladorNavegacion.navigate(Rutas.LOGIN) {
-                        popUpTo(0)
-                        launchSingleTop = true
-                    }
-                }
-            }
-        }
-
-        // ── W-08: MANTENEDORES ADMIN ──────────────────────────────────────────
-        composable(Rutas.HOME_ADMIN) {
-            val usuario = usuarioActual
-            if (usuario != null) {
-                MantenedoresAdminScreen(
-                    usuario = usuario,
-                    viewModel = trasladoViewModel,
-                    estaOnline = estaOnline,
-                    onLogout = {
-                        authViewModel.logout()
-                        controladorNavegacion.navigate(Rutas.LOGIN) {
-                            popUpTo(0)
-                            launchSingleTop = true
-                        }
-                    }
-                )
-            } else {
-                LaunchedEffect(Unit) {
-                    controladorNavegacion.navigate(Rutas.LOGIN) {
-                        popUpTo(0)
-                        launchSingleTop = true
-                    }
-                }
-            }
         }
     }
 }

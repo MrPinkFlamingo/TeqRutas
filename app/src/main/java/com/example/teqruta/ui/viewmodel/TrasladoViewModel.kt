@@ -28,21 +28,7 @@ data class FormFinalizarState(
     val esValido: Boolean = false
 )
 
-/** Estado de agregación financiera para Gerencia (MVVM) */
-data class DashboardUiState(
-    val totalGeneral: Double = 0.0,
-    val totalCombustible: Double = 0.0,
-    val totalPeajes: Double = 0.0,
-    val porcentajeCombustible: Float = 0.5f,
-    val filtroVehiculoId: Int? = null,
-    val trasladosFiltrados: List<Traslado> = emptyList()
-)
 
-/** Estado de la pantalla de Mantenedores Admin (MVVM) */
-data class AdminUiState(
-    val precioCombustible: Double = 1280.0,
-    val actualizandoTarifa: Boolean = false
-)
 
 /**
  * ViewModel principal de la aplicación TeqRuta.
@@ -69,10 +55,7 @@ class TrasladoViewModel(application: Application) : AndroidViewModel(application
     private val _formFinalizarState = MutableStateFlow(FormFinalizarState())
     val formFinalizarState: StateFlow<FormFinalizarState> = _formFinalizarState.asStateFlow()
 
-    private val _filtroVehiculoDashboard = MutableStateFlow<Int?>(null)
 
-    private val _adminState = MutableStateFlow(AdminUiState())
-    val adminState: StateFlow<AdminUiState> = _adminState.asStateFlow()
 
     // ── Flujos de Datos Reactivos de Room ──────────────────────────────────────
     private val cacheTrasladosTecnico = mutableMapOf<Int, StateFlow<List<Traslado>>>()
@@ -103,26 +86,7 @@ class TrasladoViewModel(application: Application) : AndroidViewModel(application
         vehiculoDao.getDisponibles()
             .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
 
-    // ── Dashboard de Gerencia Reactivo (Calculado en ViewModel) ────────────────
-    val dashboardUiState: StateFlow<DashboardUiState> = combine(
-        todosLosTraslados,
-        _filtroVehiculoDashboard
-    ) { traslados, filtroId ->
-        val filtrados = if (filtroId == null) traslados else traslados.filter { it.vehiculoId == filtroId }
-        val combustible = filtrados.sumOf { it.costoCombustible ?: 0.0 }
-        val peajes = filtrados.sumOf { it.costoPeajes ?: 0.0 }
-        val total = combustible + peajes
-        val pct = if (total > 0) (combustible / total).toFloat() else 0.5f
 
-        DashboardUiState(
-            totalGeneral = total,
-            totalCombustible = combustible,
-            totalPeajes = peajes,
-            porcentajeCombustible = pct,
-            filtroVehiculoId = filtroId,
-            trasladosFiltrados = filtrados
-        )
-    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), DashboardUiState())
 
     // ── Validación Centralizada: Nuevo Traslado (IE 2.2.1) ─────────────────────
     fun onNuevoDestinoSeleccionado(destino: Destino) {
@@ -177,19 +141,7 @@ class TrasladoViewModel(application: Application) : AndroidViewModel(application
         )
     }
 
-    // ── Operaciones de Gerencia y Admin en ViewModel ──────────────────────────
-    fun filtrarDashboardPorVehiculo(vehiculoId: Int?) {
-        _filtroVehiculoDashboard.value = vehiculoId
-    }
 
-    fun actualizarTarifaCombustibleDesdeApi() {
-        viewModelScope.launch {
-            _adminState.value = _adminState.value.copy(actualizandoTarifa = true)
-            val nuevoPrecio = listOf(1275.0, 1282.0, 1290.0, 1280.0).random()
-            _adminState.value = AdminUiState(precioCombustible = nuevoPrecio, actualizandoTarifa = false)
-            _mensaje.value = "Tarifa actualizada desde API CNE/ENAP: $${nuevoPrecio.toInt()} CLP"
-        }
-    }
 
     // ── Acciones de Negocio ───────────────────────────────────────────────────
     fun iniciarTraslado(

@@ -14,11 +14,7 @@ object Rutas {
     const val HOME_JEFE        = "home_jefe"
     const val DETALLE_VALIDACION = "detalle_validacion/{trasladoId}"
 
-    // Gerencia
-    const val DASHBOARD        = "dashboard"
 
-    // Admin
-    const val HOME_ADMIN       = "home_admin"
 
     // Helpers para rutas con parámetros
     fun finalizar(trasladoId: Int)        = "finalizar/$trasladoId"

@@ -31,7 +31,7 @@ interface TrasladoDao {
     """)
     fun getPendientesConDesviacion(): Flow<List<Traslado>>
 
-    /** Todos los traslados — para reportes de Gerencia */
+    /** Todos los traslados registrados en la base de datos local */
     @Query("SELECT * FROM traslados ORDER BY fechaHoraSalida DESC")
     fun getAll(): Flow<List<Traslado>>
 

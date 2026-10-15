@@ -82,12 +82,11 @@ class TrasladoRepository(private val dao: TrasladoDao) {
     // ── Cálculo de costos (RF-07, RNF-05) ─────────────────────────────────────
     /**
      * Calcula el costo total de un traslado.
-     * En el MVP usa una tarifa fija de combustible.
-     * En producción, la tarifa vendría de la API pública de ENAP/CMF.
+     * Aplica la fórmula corporativa de TEQMED con tarifas fijas de combustible y peajes.
      *
      * @param kmRecorridos Km declarados (o ajustados por el jefe)
      * @param peajesPagados Lista de peajes marcados por el técnico
-     * @param tarifaCombustiblePorKm CLP por km (default ~$150 CLP/km para MVP)
+     * @param tarifaCombustiblePorKm CLP por km (default ~$150 CLP/km)
      * @param costoPorPeaje CLP por peaje (default ~$2.200 CLP cada uno)
      */
     fun calcularCostos(

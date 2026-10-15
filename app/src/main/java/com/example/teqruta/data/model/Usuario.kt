@@ -4,13 +4,11 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 
 /**
- * Roles del sistema TeqRuta:
- * - TECNICO       → registra traslados
- * - JEFE          → valida y aprueba traslados
- * - GERENCIA      → ve reportes y dashboard de costos
- * - ADMINISTRADOR → gestiona vehículos, clientes y tramos
+ * Roles del sistema TeqRuta (Evaluación Parcial 2):
+ * - TECNICO → registra traslados en terreno (odómetro, cámara, GPS)
+ * - JEFE    → valida y audita los traslados
  */
-enum class Rol { TECNICO, JEFE, GERENCIA, ADMINISTRADOR }
+enum class Rol { TECNICO, JEFE }
 
 @Entity(tableName = "usuarios")
 data class Usuario(
@@ -29,6 +27,6 @@ data class Usuario(
 
     val rol: Rol,
 
-    /** true = cuenta activa, false = deshabilitada por admin */
+    /** true = cuenta activa, false = deshabilitada */
     val activo: Boolean = true
 )

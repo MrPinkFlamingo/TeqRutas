@@ -39,7 +39,7 @@ fun AppNavGraph(
                 estaOnline = estaOnline,
                 onLoginExitoso = { usuario ->
                     when (usuario.rol) {
-                        Rol.TECNICO, Rol.GERENCIA, Rol.ADMINISTRADOR -> controladorNavegacion.navigate(Rutas.HOME_TECNICO) {
+                        Rol.TECNICO -> controladorNavegacion.navigate(Rutas.HOME_TECNICO) {
                             popUpTo(Rutas.LOGIN) { inclusive = true }
                         }
                         Rol.JEFE -> controladorNavegacion.navigate(Rutas.HOME_JEFE) {

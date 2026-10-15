@@ -88,14 +88,7 @@ private suspend fun poblarDatosDePrueba(db: AppDatabase) {
         rut = "98765432-1", nombre = "María", apellido = "González",
         correo = "jefe@teqmed.cl", contrasena = "1234", rol = Rol.JEFE
     ))
-    usuarioDao.insertar(Usuario(
-        rut = "11111111-1", nombre = "Carlos", apellido = "López",
-        correo = "gerencia@teqmed.cl", contrasena = "1234", rol = Rol.GERENCIA
-    ))
-    usuarioDao.insertar(Usuario(
-        rut = "22222222-2", nombre = "Ana", apellido = "Martínez",
-        correo = "admin@teqmed.cl", contrasena = "1234", rol = Rol.ADMINISTRADOR
-    ))
+
 
     // ── Vehículos de prueba ───────────────────────────────────────────────────
     vehiculoDao.insertar(Vehiculo(

@@ -23,8 +23,6 @@ La base de datos local SQLite (Room) se autosemilla en el primer inicio con los 
 | **Técnico** | `tecnico@teqmed.cl` o `12345678-9` | `1234` | Iniciar viaje, odómetro inicial, finalizar viaje con odómetro final, peajes, **Cámara nativa** (foto odómetro) y **GPS nativo** (coordenadas). |
 | **Jefe de Operaciones** | `jefe@teqmed.cl` o `98765432-1` | `1234` | Bandeja de auditoría, filtro de viajes con desviación (>15%), aprobación o ajuste a km oficial. |
 
-*(Nota: Los roles de Gerencia y Administrador corresponden a los hitos de la entrega final EFT).*
-
 ---
 
 ## 🏗️ 3. Arquitectura de Software: MVVM Puro (Unidirectional Data Flow)
@@ -66,7 +64,7 @@ com.example.teqruta/
 │   └── repository/     # TrasladoRepository con lógica financiera
 ├── ui/
 │   ├── navigation/     # NavHost, Rutas y control de acceso por rol
-│   ├── screens/        # Pantallas (login, tecnico, jefe, gerencia, admin)
+│   ├── screens/        # Pantallas organizadas por módulo (login, tecnico, jefe)
 │   ├── theme/          # Paleta institucional TEQMED, tipografías y tema Material 3
 │   └── viewmodel/      # AuthViewModel y TrasladoViewModel
 └── util/               # NetworkObserver para conectividad en tiempo real

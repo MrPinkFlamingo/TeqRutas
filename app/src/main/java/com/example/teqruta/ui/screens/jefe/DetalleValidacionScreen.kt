@@ -48,7 +48,7 @@ fun DetalleValidacionScreen(
         mensaje?.let {
             snackbarHostState.showSnackbar(it)
             viewModel.limpiarMensaje()
-            if (it.startsWith("✅") || it.startsWith("⚠️")) {
+            if (it.contains("aprobado") || it.contains("Ajustado")) {
                 onVolver()
             }
         }
@@ -95,7 +95,7 @@ fun DetalleValidacionScreen(
                 .verticalScroll(rememberScrollState()),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            // ── Tarjeta Info General ──────────────────────────────────────────
+            // Informacion general
             Card(
                 shape = RoundedCornerShape(12.dp),
                 colors = CardDefaults.cardColors(containerColor = Blanco),
@@ -128,7 +128,7 @@ fun DetalleValidacionScreen(
                 }
             }
 
-            // ── Comparativa Kilómetros ────────────────────────────────────────
+            // Comparativa de kilometraje
             Card(
                 shape = RoundedCornerShape(12.dp),
                 colors = CardDefaults.cardColors(containerColor = AzulClaro),
@@ -166,7 +166,7 @@ fun DetalleValidacionScreen(
                 }
             }
 
-            // ── Desglose de Costos (Cálculo Central) ──────────────────────────
+            // Desglose de costos calculados
             Card(
                 shape = RoundedCornerShape(12.dp),
                 colors = CardDefaults.cardColors(containerColor = Blanco),
@@ -186,7 +186,7 @@ fun DetalleValidacionScreen(
                 }
             }
 
-            // ── Justificación del Técnico ─────────────────────────────────────
+            // Justificacion del tecnico
             if (traslado.justificacionDesvio.isNotBlank()) {
                 Card(
                     shape = RoundedCornerShape(12.dp),
@@ -209,7 +209,7 @@ fun DetalleValidacionScreen(
                 }
             }
 
-            // ── Observación del Jefe ──────────────────────────────────────────
+            // Observacion del jefe
             OutlinedTextField(
                 value = comentarioJefe,
                 onValueChange = { comentarioJefe = it },
@@ -220,7 +220,7 @@ fun DetalleValidacionScreen(
 
             Spacer(modifier = Modifier.height(8.dp))
 
-            // ── Botones de Resolución ─────────────────────────────────────────
+            // Botones de resolucion
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(12.dp)

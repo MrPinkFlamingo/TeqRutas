@@ -69,7 +69,7 @@ data class Traslado(
     /** FK → destinos.id */
     val destinoId: Int,
 
-    // ── Datos de salida (llenados al INICIAR) ─────────────────────────────────
+    // Datos de salida
     /** Odómetro al salir de la base, en km */
     val kmSalida: Int,
 
@@ -79,7 +79,7 @@ data class Traslado(
     /** Origen del viaje (ej: "Base TEQMED Santiago") */
     val origen: String = "Base TEQMED",
 
-    // ── Datos de llegada (llenados al FINALIZAR) ──────────────────────────────
+    // Datos de llegada
     /** Odómetro al llegar al destino, en km */
     val kmLlegada: Int? = null,
 
@@ -92,18 +92,18 @@ data class Traslado(
     /** Justificación si los km declarados superan el km oficial del tramo */
     val justificacionDesvio: String = "",
 
-    // ── Validación del Jefe ───────────────────────────────────────────────────
+    // Validacion del jefe
     /** Comentario del Jefe al aprobar o ajustar */
     val comentarioJefe: String = "",
 
     /** Km finales aprobados (pueden diferir de kmLlegada - kmSalida si hay ajuste) */
     val kmAprobados: Int? = null,
 
-    // ── Estados ───────────────────────────────────────────────────────────────
+    // Estados
     val estado: EstadoTraslado = EstadoTraslado.EN_CURSO,
     val estadoSync: EstadoSync = EstadoSync.PENDIENTE_SYNC,
 
-    // ── Costos (calculados por el sistema, NO editables por técnico) ──────────
+    // Costos calculados
     /** Costo total calculado en CLP (combustible + peajes) */
     val costoTotal: Double? = null,
 

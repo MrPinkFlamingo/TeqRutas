@@ -49,7 +49,7 @@ fun NuevoTrasladoScreen(
         mensaje?.let {
             estadoSnackbar.showSnackbar(it)
             viewModel.limpiarMensaje()
-            if (it.startsWith("✅")) onVolver()
+            if (it.contains("éxito")) onVolver()
         }
     }
 
@@ -80,7 +80,7 @@ fun NuevoTrasladoScreen(
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
 
-            // ── 1. Selector de Destino ────────────────────────────────────────
+            // Seleccion de destino
             Text("1. Destino", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
             ExposedDropdownMenuBox(
                 expanded         = expandirDestino,
@@ -117,7 +117,7 @@ fun NuevoTrasladoScreen(
                 }
             }
 
-            // ── 2. Selector de Vehículo ───────────────────────────────────────
+            // Seleccion de vehiculo
             Text("2. Vehículo Asignado", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
             ExposedDropdownMenuBox(
                 expanded         = expandirVehiculo,
@@ -155,7 +155,7 @@ fun NuevoTrasladoScreen(
                 }
             }
 
-            // ── 3. Odómetro de salida (Validado en ViewModel - IE 2.2.1) ───────
+            // Odometro inicial
             Text("3. Odómetro de Salida", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
             OutlinedTextField(
                 value           = estadoFormulario.kmSalidaTexto,
@@ -177,7 +177,7 @@ fun NuevoTrasladoScreen(
 
             Spacer(modifier = Modifier.height(8.dp))
 
-            // ── Botón Iniciar Traslado ─────────────────────────────────────────
+            // Accion de inicio de traslado
             Button(
                 onClick  = {
                     estadoFormulario.destinoSeleccionado?.let { destino ->
@@ -199,7 +199,7 @@ fun NuevoTrasladoScreen(
                 if (cargando) {
                     CircularProgressIndicator(color = Blanco, modifier = Modifier.size(22.dp), strokeWidth = 2.dp)
                 } else {
-                    Text("🚗  Iniciar Traslado", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
+                    Text("Iniciar Traslado", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
                 }
             }
         }

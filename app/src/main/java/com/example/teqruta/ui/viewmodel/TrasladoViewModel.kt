@@ -9,9 +9,9 @@ import com.example.teqruta.data.repository.TrasladoRepository
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 
-// ── MODELOS DE ESTADO DE UI (MVVM - UDF) ──────────────────────────────────────
+// Modelos de estado de UI
 
-/** Estado del formulario de Nuevo Traslado (IE 2.2.1) */
+/** Estado del formulario de Nuevo Traslado */
 data class FormNuevoTrasladoState(
     val kmSalidaTexto: String = "",
     val errorKmSalida: String? = null,
@@ -20,15 +20,13 @@ data class FormNuevoTrasladoState(
     val esValido: Boolean = false
 )
 
-/** Estado del formulario de Finalizar Traslado (IE 2.2.1) */
+/** Estado del formulario de Finalizar Traslado */
 data class FormFinalizarState(
     val kmLlegadaTexto: String = "",
     val errorKmLlegada: String? = null,
     val kmRecorridos: Int = 0,
     val esValido: Boolean = false
 )
-
-
 
 /**
  * ViewModel principal de la aplicación TeqRuta.
@@ -41,23 +39,21 @@ class TrasladoViewModel(application: Application) : AndroidViewModel(application
     private val destinoDao  = baseDeDatos.destinoDao()
     private val vehiculoDao = baseDeDatos.vehiculoDao()
 
-    // ── Estado Global y Notificaciones ─────────────────────────────────────────
+    // Estado global y notificaciones
     private val _mensaje = MutableStateFlow<String?>(null)
     val mensaje: StateFlow<String?> = _mensaje.asStateFlow()
 
     private val _cargando = MutableStateFlow(false)
     val cargando: StateFlow<Boolean> = _cargando.asStateFlow()
 
-    // ── Estados de Formularios (Desacoplados de la UI - IE 2.2.1) ─────────────
+    // Estados de formularios desacoplados de la UI
     private val _formNuevoState = MutableStateFlow(FormNuevoTrasladoState())
     val formNuevoState: StateFlow<FormNuevoTrasladoState> = _formNuevoState.asStateFlow()
 
     private val _formFinalizarState = MutableStateFlow(FormFinalizarState())
     val formFinalizarState: StateFlow<FormFinalizarState> = _formFinalizarState.asStateFlow()
 
-
-
-    // ── Flujos de Datos Reactivos de Room ──────────────────────────────────────
+    // Flujos de datos reactivos de Room
     private val cacheTrasladosTecnico = mutableMapOf<Int, StateFlow<List<Traslado>>>()
 
     fun trasladosDeTecnico(tecnicoId: Int): StateFlow<List<Traslado>> =
@@ -86,9 +82,7 @@ class TrasladoViewModel(application: Application) : AndroidViewModel(application
         vehiculoDao.getDisponibles()
             .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
 
-
-
-    // ── Validación Centralizada: Nuevo Traslado (IE 2.2.1) ─────────────────────
+    // Validacion: Nuevo Traslado
     fun onNuevoDestinoSeleccionado(destino: Destino) {
         val actual = _formNuevoState.value
         _formNuevoState.value = actual.copy(
@@ -123,7 +117,7 @@ class TrasladoViewModel(application: Application) : AndroidViewModel(application
         _formNuevoState.value = FormNuevoTrasladoState()
     }
 
-    // ── Validación Centralizada: Finalizar Traslado (IE 2.2.1) ─────────────────
+    // Validacion: Finalizar Traslado
     fun onFinalizarKmLlegadaCambiado(kmSalida: Int, llegadaTexto: String) {
         if (!llegadaTexto.all { it.isDigit() }) return
         val kmLlegadaNumero = llegadaTexto.toIntOrNull()
@@ -141,9 +135,7 @@ class TrasladoViewModel(application: Application) : AndroidViewModel(application
         )
     }
 
-
-
-    // ── Acciones de Negocio ───────────────────────────────────────────────────
+    // Acciones de negocio
     fun iniciarTraslado(
         tecnicoId:  Int,
         vehiculoId: Int,
@@ -167,7 +159,7 @@ class TrasladoViewModel(application: Application) : AndroidViewModel(application
                     origen     = origen
                 ))
                 resetFormNuevo()
-                _mensaje.value = "✅ Traslado iniciado con éxito"
+                _mensaje.value = "Traslado iniciado con éxito"
             } catch (e: Exception) {
                 _mensaje.value = "Error al iniciar: ${e.message}"
             } finally {
@@ -199,7 +191,7 @@ class TrasladoViewModel(application: Application) : AndroidViewModel(application
                     costoPeajes         = costoPeajes
                 ))
                 _formFinalizarState.value = FormFinalizarState()
-                _mensaje.value = "✅ Traslado finalizado exitosamente"
+                _mensaje.value = "Traslado finalizado exitosamente"
             } catch (e: Exception) {
                 _mensaje.value = "Error al finalizar: ${e.message}"
             } finally {
@@ -211,14 +203,14 @@ class TrasladoViewModel(application: Application) : AndroidViewModel(application
     fun aprobarTraslado(trasladoId: Int, comentario: String = "Aprobado") {
         viewModelScope.launch {
             repositorio.aprobarTraslado(trasladoId, comentario)
-            _mensaje.value = "✅ Traslado aprobado"
+            _mensaje.value = "Traslado aprobado"
         }
     }
 
     fun ajustarAKmOficial(trasladoId: Int, kmOficial: Int, comentario: String) {
         viewModelScope.launch {
             repositorio.ajustarAKmOficial(trasladoId, kmOficial, comentario)
-            _mensaje.value = "⚠️ Ajustado a Km oficial"
+            _mensaje.value = "Ajustado a Km oficial"
         }
     }
 

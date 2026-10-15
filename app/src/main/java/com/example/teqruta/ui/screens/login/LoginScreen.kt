@@ -59,12 +59,12 @@ fun LoginScreen(
     ) {
         Spacer(modifier = Modifier.height(32.dp))
 
-        // ── Badge de estado de conexión ───────────────────────────────────────
+        // Estado de conexion
         BadgeConexion(estaOnline = estaOnline)
 
         Spacer(modifier = Modifier.height(40.dp))
 
-        // ── Logo / Nombre de la app ───────────────────────────────────────────
+        // Identificacion de la aplicacion
         Text(
             text       = "TeqRuta",
             fontSize   = 36.sp,
@@ -87,7 +87,7 @@ fun LoginScreen(
 
         Spacer(modifier = Modifier.height(40.dp))
 
-        // ── Tarjeta de formulario ─────────────────────────────────────────────
+        // Formulario de ingreso
         Card(
             shape    = RoundedCornerShape(16.dp),
             colors   = CardDefaults.cardColors(containerColor = Blanco),
@@ -162,14 +162,14 @@ fun LoginScreen(
 
         Spacer(modifier = Modifier.height(24.dp))
 
-        // Usuarios de prueba (solo para MVP/desarrollo)
+        // Credenciales de prueba
         Card(
             shape    = RoundedCornerShape(12.dp),
             colors   = CardDefaults.cardColors(containerColor = AzulClaro),
             modifier = Modifier.fillMaxWidth()
         ) {
             Column(modifier = Modifier.padding(16.dp)) {
-                Text("👤 Usuarios de prueba:", style = MaterialTheme.typography.labelLarge, color = AzulPrimario)
+                Text("Usuarios de prueba:", style = MaterialTheme.typography.labelLarge, color = AzulPrimario)
                 Spacer(modifier = Modifier.height(4.dp))
                 Text("Técnico en Terreno: tecnico@teqmed.cl / 1234", style = MaterialTheme.typography.bodyMedium)
                 Text("Jefe de Operaciones: jefe@teqmed.cl / 1234", style = MaterialTheme.typography.bodyMedium)

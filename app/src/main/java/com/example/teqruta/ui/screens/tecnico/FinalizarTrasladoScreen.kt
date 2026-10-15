@@ -71,7 +71,7 @@ fun FinalizarTrasladoScreen(
     var justificacion       by remember { mutableStateOf("") }
     val peajesSeleccionados = remember { mutableStateListOf<String>() }
 
-    // ── RECURSO NATIVO 1: CÁMARA (IE 2.4.1) ───────────────────────────────────
+    // Camara fotografica
     var fotoBitmap by remember { mutableStateOf<Bitmap?>(null) }
     val lanzadorCamara = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.TakePicturePreview()
@@ -88,7 +88,7 @@ fun FinalizarTrasladoScreen(
         }
     }
 
-    // ── RECURSO NATIVO 2: GPS / GEOLOCALIZACIÓN (IE 2.4.1) ────────────────────
+    // Ubicacion geografica
     var coordenadasGps by remember { mutableStateOf<String?>(null) }
 
     fun capturarGps() {
@@ -127,7 +127,7 @@ fun FinalizarTrasladoScreen(
         mensaje?.let {
             estadoSnackbar.showSnackbar(it)
             viewModel.limpiarMensaje()
-            if (it.startsWith("✅")) onVolver()
+            if (it.contains("exitosamente")) onVolver()
         }
     }
 
@@ -171,7 +171,7 @@ fun FinalizarTrasladoScreen(
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
 
-            // ── Resumen del viaje ─────────────────────────────────────────────
+            // Resumen del viaje
             Card(
                 shape  = RoundedCornerShape(12.dp),
                 colors = CardDefaults.cardColors(containerColor = AzulClaro)
@@ -188,7 +188,7 @@ fun FinalizarTrasladoScreen(
                 }
             }
 
-            // ── Odómetro de llegada (Validación en ViewModel - IE 2.2.1) ───────
+            // Odometro de llegada
             Text("Odómetro de Llegada", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
             OutlinedTextField(
                 value           = estadoFormulario.kmLlegadaTexto,
@@ -207,7 +207,7 @@ fun FinalizarTrasladoScreen(
                 }
             )
 
-            // ── RECURSOS NATIVOS DEL DISPOSITIVO (IE 2.4.1) ───────────────────
+            // Respaldo en terreno mediante recursos nativos
             Text("Respaldo en Terreno (Recursos Nativos)", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
             Card(
                 shape  = RoundedCornerShape(12.dp),
@@ -260,7 +260,7 @@ fun FinalizarTrasladoScreen(
                         }
                     }
 
-                    // ANIMACIÓN FLUIDA DE FOTO CAPTURADA (IE 2.2.2)
+                    // Previsualizacion de imagen capturada
                     AnimatedVisibility(
                         visible = fotoBitmap != null,
                         enter = fadeIn() + expandVertically(),
@@ -285,7 +285,7 @@ fun FinalizarTrasladoScreen(
                         }
                     }
 
-                    // ANIMACIÓN FLUIDA DE COORDENADAS GPS (IE 2.2.2)
+                    // Coordenadas GPS obtenidas
                     AnimatedVisibility(
                         visible = coordenadasGps != null,
                         enter = fadeIn() + expandVertically(),
@@ -311,7 +311,7 @@ fun FinalizarTrasladoScreen(
                 }
             }
 
-            // ── Checkboxes de peajes ──────────────────────────────────────────
+            // Peajes registrados
             Text("Peajes Pagados", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
             Card(
                 shape  = RoundedCornerShape(12.dp),
@@ -340,7 +340,7 @@ fun FinalizarTrasladoScreen(
                 }
             }
 
-            // ── Justificación de desvío ───────────────────────────────────────
+            // Justificacion de desvio
             Text("Justificación de Desvío (si aplica)", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
             OutlinedTextField(
                 value         = justificacion,
@@ -354,7 +354,7 @@ fun FinalizarTrasladoScreen(
 
             Spacer(modifier = Modifier.height(8.dp))
 
-            // ── Botón finalizar ───────────────────────────────────────────────
+            // Accion de finalizacion
             Button(
                 onClick  = {
                     val justificacionCompleta = buildString {

@@ -6,7 +6,7 @@ import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 
-// ── Esquema Claro ─────────────────────────────────────────────────────────────
+// Esquema claro
 private val LightColorScheme = lightColorScheme(
     primary            = AzulPrimario,
     onPrimary          = Blanco,
@@ -26,7 +26,7 @@ private val LightColorScheme = lightColorScheme(
     outlineVariant     = GrisBorde
 )
 
-// ── Esquema Oscuro ────────────────────────────────────────────────────────────
+// Esquema oscuro
 private val DarkColorScheme = darkColorScheme(
     primary          = AzulPrimarioDark,
     onPrimary        = SuperficieDark,

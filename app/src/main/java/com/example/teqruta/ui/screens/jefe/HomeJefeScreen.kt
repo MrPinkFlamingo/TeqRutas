@@ -45,7 +45,7 @@ fun HomeJefeScreen(
     val destinos by viewModel.destinos.collectAsState()
 
     var pestanaSeleccionada by remember { mutableStateOf(0) }
-    val titulosPestanas = listOf("Con Desviación ⚠️", "Todos los Pendientes")
+    val titulosPestanas = listOf("Con Desviación", "Todos los Pendientes")
 
     Scaffold(
         topBar = {

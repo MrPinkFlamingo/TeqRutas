@@ -34,14 +34,14 @@ class AuthViewModel(application: Application) : AndroidViewModel(application) {
     private val usuarioDao    = baseDeDatos.usuarioDao()
     private val almacenSesion = SessionDataStore(application)
 
-    // ── Estado del UI ─────────────────────────────────────────────────────────
+    // Estado de la interfaz
     private val _loginState = MutableStateFlow<LoginUiState>(LoginUiState.Idle)
     val loginState: StateFlow<LoginUiState> = _loginState.asStateFlow()
 
     private val _usuarioActual = MutableStateFlow<Usuario?>(null)
     val usuarioActual: StateFlow<Usuario?> = _usuarioActual.asStateFlow()
 
-    // ── Al iniciar el ViewModel, verificar si ya hay sesión activa ─────────────
+    // Verificacion de sesion activa persistida
     init {
         viewModelScope.launch {
             val idGuardado = almacenSesion.usuarioId.first()
@@ -55,7 +55,7 @@ class AuthViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
-    // ── Acciones del usuario ──────────────────────────────────────────────────
+    // Acciones de autenticacion
 
     fun login(credencial: String, contrasena: String) {
         if (credencial.isBlank() || contrasena.isBlank()) {

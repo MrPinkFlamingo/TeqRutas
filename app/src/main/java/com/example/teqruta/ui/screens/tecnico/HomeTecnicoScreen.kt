@@ -106,7 +106,7 @@ fun HomeTecnicoScreen(
             contentPadding      = PaddingValues(16.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
-            // ── Tarjeta de traslado activo ────────────────────────────────────
+            // Traslado en curso
             if (trasladoActivo != null) {
                 item {
                     TarjetaTrasladoActivo(
@@ -116,7 +116,7 @@ fun HomeTecnicoScreen(
                 }
             }
 
-            // ── Encabezado historial ──────────────────────────────────────────
+            // Historial de traslados
             item {
                 Text(
                     text       = "Mis Traslados",

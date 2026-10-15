@@ -32,7 +32,7 @@ fun AppNavGraph(
         navController = controladorNavegacion,
         startDestination = Rutas.LOGIN
     ) {
-        // ── W-01: LOGIN ───────────────────────────────────────────────────────
+        // Login
         composable(Rutas.LOGIN) {
             LoginScreen(
                 authViewModel = authViewModel,
@@ -50,7 +50,7 @@ fun AppNavGraph(
             )
         }
 
-        // ── W-02 / W-04: HOME TÉCNICO & HISTORIAL ─────────────────────────────
+        // Home tecnico e historial
         composable(Rutas.HOME_TECNICO) {
             val usuario = usuarioActual
             if (usuario != null) {
@@ -78,7 +78,7 @@ fun AppNavGraph(
             }
         }
 
-        // ── W-02: NUEVO TRASLADO ──────────────────────────────────────────────
+        // Formulario nuevo traslado
         composable(Rutas.NUEVO_TRASLADO) {
             val usuario = usuarioActual
             if (usuario != null) {
@@ -97,7 +97,7 @@ fun AppNavGraph(
             }
         }
 
-        // ── W-03: FINALIZAR TRASLADO ──────────────────────────────────────────
+        // Formulario finalizar traslado
         composable(
             route = Rutas.FINALIZAR,
             arguments = listOf(navArgument("trasladoId") { type = NavType.IntType })
@@ -110,7 +110,7 @@ fun AppNavGraph(
             )
         }
 
-        // ── W-05: HOME JEFE (BANDEJA VALIDACIÓN) ──────────────────────────────
+        // Bandeja de validacion jefe
         composable(Rutas.HOME_JEFE) {
             val usuario = usuarioActual
             if (usuario != null) {
@@ -137,7 +137,7 @@ fun AppNavGraph(
             }
         }
 
-        // ── W-06: DETALLE Y RESOLUCIÓN DE VIAJE ───────────────────────────────
+        // Detalle de validacion
         composable(
             route = Rutas.DETALLE_VALIDACION,
             arguments = listOf(navArgument("trasladoId") { type = NavType.IntType })

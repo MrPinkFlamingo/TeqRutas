@@ -13,7 +13,7 @@ import kotlinx.coroutines.flow.Flow
  */
 class TrasladoRepository(private val dao: TrasladoDao) {
 
-    // ── Consultas reactivas (Flow) ────────────────────────────────────────────
+    // Consultas reactivas Flow
 
     fun getTrasladosDeTecnico(tecnicoId: Int): Flow<List<Traslado>> =
         dao.getByTecnico(tecnicoId)
@@ -27,15 +27,14 @@ class TrasladoRepository(private val dao: TrasladoDao) {
     fun getTodos(): Flow<List<Traslado>> =
         dao.getAll()
 
-    // ── Consultas puntuales (suspend) ─────────────────────────────────────────
-
+    // Consultas suspendidas
     suspend fun getTrasladoActivo(tecnicoId: Int): Traslado? =
         dao.getTrasladoActivo(tecnicoId)
 
     suspend fun getById(id: Int): Traslado? =
         dao.getById(id)
 
-    // ── Escritura ─────────────────────────────────────────────────────────────
+    // Escritura de datos
 
     /** Inicia un nuevo traslado — guarda estado EN_CURSO y sync PENDIENTE */
     suspend fun iniciarTraslado(traslado: Traslado): Long =
@@ -79,7 +78,7 @@ class TrasladoRepository(private val dao: TrasladoDao) {
     suspend fun eliminar(traslado: Traslado) =
         dao.eliminar(traslado)
 
-    // ── Cálculo de costos (RF-07, RNF-05) ─────────────────────────────────────
+    // Calculo de costos de traslado
     /**
      * Calcula el costo total de un traslado.
      * Aplica la fórmula corporativa de TEQMED con tarifas fijas de combustible y peajes.

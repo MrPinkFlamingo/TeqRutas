@@ -29,8 +29,7 @@ class SessionDataStore(private val context: Context) {
         private val KEY_USUARIO_ROL    = stringPreferencesKey("usuario_rol")
     }
 
-    // ── Lectura reactiva ──────────────────────────────────────────────────────
-
+    // Lectura reactiva
     val usuarioId: Flow<Int> = context.dataStore.data.map { prefs ->
         prefs[KEY_USUARIO_ID] ?: -1
     }
@@ -47,7 +46,7 @@ class SessionDataStore(private val context: Context) {
         (prefs[KEY_USUARIO_ID] ?: -1) != -1
     }
 
-    // ── Escritura ─────────────────────────────────────────────────────────────
+    // Escritura de sesion
 
     /** Guarda los datos del usuario al hacer login exitoso */
     suspend fun guardarSesion(id: Int, nombre: String, correo: String, rol: Rol) {

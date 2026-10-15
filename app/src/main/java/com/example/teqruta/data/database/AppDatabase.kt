@@ -12,7 +12,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-// ── Type Converters para enums ────────────────────────────────────────────────
+// Conversores de tipo para enums
 class Converters {
     @TypeConverter fun fromRol(rol: Rol): String = rol.name
     @TypeConverter fun toRol(value: String): Rol = Rol.valueOf(value)
@@ -24,7 +24,7 @@ class Converters {
     @TypeConverter fun toEstadoSync(value: String): EstadoSync = EstadoSync.valueOf(value)
 }
 
-// ── Base de datos principal ───────────────────────────────────────────────────
+// Base de datos principal Room
 @Database(
     entities  = [Usuario::class, Vehiculo::class, Destino::class, Traslado::class],
     version   = 1,
@@ -57,7 +57,7 @@ abstract class AppDatabase : RoomDatabase() {
         }
     }
 
-    // ── Datos iniciales de prueba (seed) ──────────────────────────────────────
+    // Carga de datos iniciales
     private class DatabaseCallback : Callback() {
         override fun onCreate(db: SupportSQLiteDatabase) {
             super.onCreate(db)
@@ -79,7 +79,7 @@ private suspend fun poblarDatosDePrueba(db: AppDatabase) {
     val vehiculoDao = db.vehiculoDao()
     val destinoDao  = db.destinoDao()
 
-    // ── Usuarios de prueba ────────────────────────────────────────────────────
+    // Usuarios de prueba
     usuarioDao.insertar(Usuario(
         rut = "12345678-9", nombre = "Juan", apellido = "Pérez",
         correo = "tecnico@teqmed.cl", contrasena = "1234", rol = Rol.TECNICO
@@ -90,7 +90,7 @@ private suspend fun poblarDatosDePrueba(db: AppDatabase) {
     ))
 
 
-    // ── Vehículos de prueba ───────────────────────────────────────────────────
+    // Vehículos de prueba
     vehiculoDao.insertar(Vehiculo(
         patente = "ABCD12", marca = "Toyota", modelo = "Hilux",
         anio = 2022, kmActual = 45230
@@ -100,7 +100,7 @@ private suspend fun poblarDatosDePrueba(db: AppDatabase) {
         anio = 2021, kmActual = 78500
     ))
 
-    // ── Destinos de prueba ────────────────────────────────────────────────────
+    // Destinos de prueba
     destinoDao.insertar(Destino(
         nombre = "Hospital Las Higueras", direccion = "Av. Las Higueras 544",
         ciudad = "Talcahuano", kmOficial = 12.5,

@@ -36,17 +36,17 @@ fun LoginScreen(
     estaOnline: Boolean,
     onLoginExitoso: (Usuario) -> Unit
 ) {
-    val loginState by authViewModel.loginState.collectAsState()
+    val estadoLogin by authViewModel.loginState.collectAsState()
     var credencial  by remember { mutableStateOf("") }
     var contrasena  by remember { mutableStateOf("") }
 
     // Navegar cuando el login es exitoso
-    LaunchedEffect(loginState) {
-        val state = loginState
-        if (state is LoginUiState.Success) {
-            val user = state.usuario
+    LaunchedEffect(estadoLogin) {
+        val estadoActual = estadoLogin
+        if (estadoActual is LoginUiState.Success) {
+            val usuarioLogueado = estadoActual.usuario
             authViewModel.resetearEstado()
-            onLoginExitoso(user)
+            onLoginExitoso(usuarioLogueado)
         }
     }
 
@@ -114,7 +114,7 @@ fun LoginScreen(
                     modifier         = Modifier.fillMaxWidth(),
                     singleLine       = true,
                     keyboardOptions  = KeyboardOptions(keyboardType = KeyboardType.Email),
-                    isError          = loginState is LoginUiState.Error
+                    isError          = estadoLogin is LoginUiState.Error
                 )
 
                 // Campo contraseña
@@ -127,13 +127,13 @@ fun LoginScreen(
                     singleLine          = true,
                     visualTransformation = PasswordVisualTransformation(),
                     keyboardOptions     = KeyboardOptions(keyboardType = KeyboardType.Password),
-                    isError             = loginState is LoginUiState.Error
+                    isError             = estadoLogin is LoginUiState.Error
                 )
 
                 // Mensaje de error
-                AnimatedVisibility(visible = loginState is LoginUiState.Error) {
+                AnimatedVisibility(visible = estadoLogin is LoginUiState.Error) {
                     Text(
-                        text  = (loginState as? LoginUiState.Error)?.mensaje ?: "",
+                        text  = (estadoLogin as? LoginUiState.Error)?.mensaje ?: "",
                         color = RojoDesviacion,
                         style = MaterialTheme.typography.labelMedium
                     )
@@ -143,11 +143,11 @@ fun LoginScreen(
                 Button(
                     onClick  = { authViewModel.login(credencial, contrasena) },
                     modifier = Modifier.fillMaxWidth().height(50.dp),
-                    enabled  = loginState !is LoginUiState.Loading,
+                    enabled  = estadoLogin !is LoginUiState.Loading,
                     shape    = RoundedCornerShape(12.dp),
                     colors   = ButtonDefaults.buttonColors(containerColor = AzulPrimario)
                 ) {
-                    if (loginState is LoginUiState.Loading) {
+                    if (estadoLogin is LoginUiState.Loading) {
                         CircularProgressIndicator(
                             color    = Blanco,
                             modifier = Modifier.size(20.dp),
@@ -183,12 +183,12 @@ fun LoginScreen(
 /** Indicador persistente de estado de conexión con animación fluida (IE 2.2.2) */
 @Composable
 fun BadgeConexion(estaOnline: Boolean, modifier: Modifier = Modifier) {
-    val backgroundColorAnim by androidx.compose.animation.animateColorAsState(
+    val colorFondoAnimado by androidx.compose.animation.animateColorAsState(
         targetValue = if (estaOnline) VerdeClaro else NaranjaClaro,
         animationSpec = androidx.compose.animation.core.tween(500),
         label = "BadgeBgColor"
     )
-    val contentColorAnim by androidx.compose.animation.animateColorAsState(
+    val colorContenidoAnimado by androidx.compose.animation.animateColorAsState(
         targetValue = if (estaOnline) VerdeSincronizado else NaranjaOffline,
         animationSpec = androidx.compose.animation.core.tween(500),
         label = "BadgeContentColor"
@@ -197,7 +197,7 @@ fun BadgeConexion(estaOnline: Boolean, modifier: Modifier = Modifier) {
     Row(
         modifier          = modifier
             .background(
-                color = backgroundColorAnim,
+                color = colorFondoAnimado,
                 shape = RoundedCornerShape(20.dp)
             )
             .padding(horizontal = 12.dp, vertical = 6.dp),
@@ -207,12 +207,12 @@ fun BadgeConexion(estaOnline: Boolean, modifier: Modifier = Modifier) {
         Icon(
             imageVector = if (estaOnline) Icons.Default.Wifi else Icons.Default.WifiOff,
             contentDescription = null,
-            tint     = contentColorAnim,
+            tint     = colorContenidoAnimado,
             modifier = Modifier.size(16.dp)
         )
         Text(
             text  = if (estaOnline) "En línea" else "Sin conexión",
-            color = contentColorAnim,
+            color = colorContenidoAnimado,
             style = MaterialTheme.typography.labelMedium,
             fontWeight = FontWeight.Bold
         )

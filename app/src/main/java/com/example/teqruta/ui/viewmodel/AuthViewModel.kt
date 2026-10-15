@@ -30,9 +30,9 @@ sealed class LoginUiState {
  */
 class AuthViewModel(application: Application) : AndroidViewModel(application) {
 
-    private val db           = AppDatabase.getInstance(application)
-    private val usuarioDao   = db.usuarioDao()
-    private val sessionStore = SessionDataStore(application)
+    private val baseDeDatos   = AppDatabase.getInstance(application)
+    private val usuarioDao    = baseDeDatos.usuarioDao()
+    private val almacenSesion = SessionDataStore(application)
 
     // ── Estado del UI ─────────────────────────────────────────────────────────
     private val _loginState = MutableStateFlow<LoginUiState>(LoginUiState.Idle)
@@ -44,9 +44,9 @@ class AuthViewModel(application: Application) : AndroidViewModel(application) {
     // ── Al iniciar el ViewModel, verificar si ya hay sesión activa ─────────────
     init {
         viewModelScope.launch {
-            val id = sessionStore.usuarioId.first()
-            if (id != -1) {
-                val usuario = usuarioDao.getById(id)
+            val idGuardado = almacenSesion.usuarioId.first()
+            if (idGuardado != -1) {
+                val usuario = usuarioDao.getById(idGuardado)
                 _usuarioActual.value = usuario
                 if (usuario != null) {
                     _loginState.value = LoginUiState.Success(usuario)
@@ -66,7 +66,7 @@ class AuthViewModel(application: Application) : AndroidViewModel(application) {
             _loginState.value = LoginUiState.Loading
             val usuario = usuarioDao.login(credencial.trim(), contrasena.trim())
             if (usuario != null) {
-                sessionStore.guardarSesion(
+                almacenSesion.guardarSesion(
                     id      = usuario.id,
                     nombre  = "${usuario.nombre} ${usuario.apellido}",
                     correo  = usuario.correo,
@@ -84,7 +84,7 @@ class AuthViewModel(application: Application) : AndroidViewModel(application) {
         _usuarioActual.value = null
         _loginState.value    = LoginUiState.Idle
         viewModelScope.launch {
-            sessionStore.cerrarSesion()
+            almacenSesion.cerrarSesion()
         }
     }
 

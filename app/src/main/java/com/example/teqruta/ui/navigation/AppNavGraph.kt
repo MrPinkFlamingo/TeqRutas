@@ -23,7 +23,7 @@ import com.example.teqruta.ui.viewmodel.TrasladoViewModel
 
 @Composable
 fun AppNavGraph(
-    navController: NavHostController,
+    controladorNavegacion: NavHostController,
     authViewModel: AuthViewModel,
     trasladoViewModel: TrasladoViewModel,
     estaOnline: Boolean
@@ -31,7 +31,7 @@ fun AppNavGraph(
     val usuarioActual by authViewModel.usuarioActual.collectAsState()
 
     NavHost(
-        navController = navController,
+        navController = controladorNavegacion,
         startDestination = Rutas.LOGIN
     ) {
         // ── W-01: LOGIN ───────────────────────────────────────────────────────
@@ -41,16 +41,16 @@ fun AppNavGraph(
                 estaOnline = estaOnline,
                 onLoginExitoso = { usuario ->
                     when (usuario.rol) {
-                        Rol.TECNICO -> navController.navigate(Rutas.HOME_TECNICO) {
+                        Rol.TECNICO -> controladorNavegacion.navigate(Rutas.HOME_TECNICO) {
                             popUpTo(Rutas.LOGIN) { inclusive = true }
                         }
-                        Rol.JEFE -> navController.navigate(Rutas.HOME_JEFE) {
+                        Rol.JEFE -> controladorNavegacion.navigate(Rutas.HOME_JEFE) {
                             popUpTo(Rutas.LOGIN) { inclusive = true }
                         }
-                        Rol.GERENCIA -> navController.navigate(Rutas.DASHBOARD) {
+                        Rol.GERENCIA -> controladorNavegacion.navigate(Rutas.DASHBOARD) {
                             popUpTo(Rutas.LOGIN) { inclusive = true }
                         }
-                        Rol.ADMINISTRADOR -> navController.navigate(Rutas.HOME_ADMIN) {
+                        Rol.ADMINISTRADOR -> controladorNavegacion.navigate(Rutas.HOME_ADMIN) {
                             popUpTo(Rutas.LOGIN) { inclusive = true }
                         }
                     }
@@ -60,17 +60,17 @@ fun AppNavGraph(
 
         // ── W-02 / W-04: HOME TÉCNICO & HISTORIAL ─────────────────────────────
         composable(Rutas.HOME_TECNICO) {
-            val user = usuarioActual
-            if (user != null) {
+            val usuario = usuarioActual
+            if (usuario != null) {
                 HomeTecnicoScreen(
-                    usuario = user,
+                    usuario = usuario,
                     viewModel = trasladoViewModel,
                     estaOnline = estaOnline,
-                    onNuevoTraslado = { navController.navigate(Rutas.NUEVO_TRASLADO) },
-                    onFinalizarTraslado = { id -> navController.navigate(Rutas.finalizar(id)) },
+                    onNuevoTraslado = { controladorNavegacion.navigate(Rutas.NUEVO_TRASLADO) },
+                    onFinalizarTraslado = { idTraslado -> controladorNavegacion.navigate(Rutas.finalizar(idTraslado)) },
                     onLogout = {
                         authViewModel.logout()
-                        navController.navigate(Rutas.LOGIN) {
+                        controladorNavegacion.navigate(Rutas.LOGIN) {
                             popUpTo(0)
                             launchSingleTop = true
                         }
@@ -78,7 +78,7 @@ fun AppNavGraph(
                 )
             } else {
                 LaunchedEffect(Unit) {
-                    navController.navigate(Rutas.LOGIN) {
+                    controladorNavegacion.navigate(Rutas.LOGIN) {
                         popUpTo(0)
                         launchSingleTop = true
                     }
@@ -88,16 +88,16 @@ fun AppNavGraph(
 
         // ── W-02: NUEVO TRASLADO ──────────────────────────────────────────────
         composable(Rutas.NUEVO_TRASLADO) {
-            val user = usuarioActual
-            if (user != null) {
+            val usuario = usuarioActual
+            if (usuario != null) {
                 NuevoTrasladoScreen(
-                    usuario = user,
+                    usuario = usuario,
                     viewModel = trasladoViewModel,
-                    onVolver = { navController.popBackStack() }
+                    onVolver = { controladorNavegacion.popBackStack() }
                 )
             } else {
                 LaunchedEffect(Unit) {
-                    navController.navigate(Rutas.LOGIN) {
+                    controladorNavegacion.navigate(Rutas.LOGIN) {
                         popUpTo(0)
                         launchSingleTop = true
                     }
@@ -109,27 +109,27 @@ fun AppNavGraph(
         composable(
             route = Rutas.FINALIZAR,
             arguments = listOf(navArgument("trasladoId") { type = NavType.IntType })
-        ) { backStackEntry ->
-            val trasladoId = backStackEntry.arguments?.getInt("trasladoId") ?: 0
+        ) { entradaNavegacion ->
+            val trasladoId = entradaNavegacion.arguments?.getInt("trasladoId") ?: 0
             FinalizarTrasladoScreen(
                 trasladoId = trasladoId,
                 viewModel = trasladoViewModel,
-                onVolver = { navController.popBackStack() }
+                onVolver = { controladorNavegacion.popBackStack() }
             )
         }
 
         // ── W-05: HOME JEFE (BANDEJA VALIDACIÓN) ──────────────────────────────
         composable(Rutas.HOME_JEFE) {
-            val user = usuarioActual
-            if (user != null) {
+            val usuario = usuarioActual
+            if (usuario != null) {
                 HomeJefeScreen(
-                    usuario = user,
+                    usuario = usuario,
                     viewModel = trasladoViewModel,
                     estaOnline = estaOnline,
-                    onSeleccionarTraslado = { id -> navController.navigate(Rutas.detalleValidacion(id)) },
+                    onSeleccionarTraslado = { idTraslado -> controladorNavegacion.navigate(Rutas.detalleValidacion(idTraslado)) },
                     onLogout = {
                         authViewModel.logout()
-                        navController.navigate(Rutas.LOGIN) {
+                        controladorNavegacion.navigate(Rutas.LOGIN) {
                             popUpTo(0)
                             launchSingleTop = true
                         }
@@ -137,7 +137,7 @@ fun AppNavGraph(
                 )
             } else {
                 LaunchedEffect(Unit) {
-                    navController.navigate(Rutas.LOGIN) {
+                    controladorNavegacion.navigate(Rutas.LOGIN) {
                         popUpTo(0)
                         launchSingleTop = true
                     }
@@ -149,26 +149,26 @@ fun AppNavGraph(
         composable(
             route = Rutas.DETALLE_VALIDACION,
             arguments = listOf(navArgument("trasladoId") { type = NavType.IntType })
-        ) { backStackEntry ->
-            val trasladoId = backStackEntry.arguments?.getInt("trasladoId") ?: 0
+        ) { entradaNavegacion ->
+            val trasladoId = entradaNavegacion.arguments?.getInt("trasladoId") ?: 0
             DetalleValidacionScreen(
                 trasladoId = trasladoId,
                 viewModel = trasladoViewModel,
-                onVolver = { navController.popBackStack() }
+                onVolver = { controladorNavegacion.popBackStack() }
             )
         }
 
         // ── W-07: DASHBOARD GERENCIA ──────────────────────────────────────────
         composable(Rutas.DASHBOARD) {
-            val user = usuarioActual
-            if (user != null) {
+            val usuario = usuarioActual
+            if (usuario != null) {
                 DashboardGerenciaScreen(
-                    usuario = user,
+                    usuario = usuario,
                     viewModel = trasladoViewModel,
                     estaOnline = estaOnline,
                     onLogout = {
                         authViewModel.logout()
-                        navController.navigate(Rutas.LOGIN) {
+                        controladorNavegacion.navigate(Rutas.LOGIN) {
                             popUpTo(0)
                             launchSingleTop = true
                         }
@@ -176,7 +176,7 @@ fun AppNavGraph(
                 )
             } else {
                 LaunchedEffect(Unit) {
-                    navController.navigate(Rutas.LOGIN) {
+                    controladorNavegacion.navigate(Rutas.LOGIN) {
                         popUpTo(0)
                         launchSingleTop = true
                     }
@@ -186,15 +186,15 @@ fun AppNavGraph(
 
         // ── W-08: MANTENEDORES ADMIN ──────────────────────────────────────────
         composable(Rutas.HOME_ADMIN) {
-            val user = usuarioActual
-            if (user != null) {
+            val usuario = usuarioActual
+            if (usuario != null) {
                 MantenedoresAdminScreen(
-                    usuario = user,
+                    usuario = usuario,
                     viewModel = trasladoViewModel,
                     estaOnline = estaOnline,
                     onLogout = {
                         authViewModel.logout()
-                        navController.navigate(Rutas.LOGIN) {
+                        controladorNavegacion.navigate(Rutas.LOGIN) {
                             popUpTo(0)
                             launchSingleTop = true
                         }
@@ -202,7 +202,7 @@ fun AppNavGraph(
                 )
             } else {
                 LaunchedEffect(Unit) {
-                    navController.navigate(Rutas.LOGIN) {
+                    controladorNavegacion.navigate(Rutas.LOGIN) {
                         popUpTo(0)
                         launchSingleTop = true
                     }

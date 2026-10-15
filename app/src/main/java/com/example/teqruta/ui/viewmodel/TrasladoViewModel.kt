@@ -50,10 +50,10 @@ data class AdminUiState(
  */
 class TrasladoViewModel(application: Application) : AndroidViewModel(application) {
 
-    private val db          = AppDatabase.getInstance(application)
-    private val repository  = TrasladoRepository(db.trasladoDao())
-    private val destinoDao  = db.destinoDao()
-    private val vehiculoDao = db.vehiculoDao()
+    private val baseDeDatos = AppDatabase.getInstance(application)
+    private val repositorio = TrasladoRepository(baseDeDatos.trasladoDao())
+    private val destinoDao  = baseDeDatos.destinoDao()
+    private val vehiculoDao = baseDeDatos.vehiculoDao()
 
     // ── Estado Global y Notificaciones ─────────────────────────────────────────
     private val _mensaje = MutableStateFlow<String?>(null)
@@ -79,20 +79,20 @@ class TrasladoViewModel(application: Application) : AndroidViewModel(application
 
     fun trasladosDeTecnico(tecnicoId: Int): StateFlow<List<Traslado>> =
         cacheTrasladosTecnico.getOrPut(tecnicoId) {
-            repository.getTrasladosDeTecnico(tecnicoId)
+            repositorio.getTrasladosDeTecnico(tecnicoId)
                 .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
         }
 
     val pendientesValidacion: StateFlow<List<Traslado>> =
-        repository.getPendientesValidacion()
+        repositorio.getPendientesValidacion()
             .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
 
     val pendientesConDesviacion: StateFlow<List<Traslado>> =
-        repository.getPendientesConDesviacion()
+        repositorio.getPendientesConDesviacion()
             .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
 
     val todosLosTraslados: StateFlow<List<Traslado>> =
-        repository.getTodos()
+        repositorio.getTodos()
             .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
 
     val destinos: StateFlow<List<Destino>> =
@@ -152,8 +152,8 @@ class TrasladoViewModel(application: Application) : AndroidViewModel(application
         )
     }
 
-    private fun validarNuevo(d: Destino?, v: Vehiculo?, km: String): Boolean =
-        d != null && v != null && km.isNotBlank() && (km.toIntOrNull() ?: 0) > 0
+    private fun validarNuevo(destino: Destino?, vehiculo: Vehiculo?, kilometrajeTexto: String): Boolean =
+        destino != null && vehiculo != null && kilometrajeTexto.isNotBlank() && (kilometrajeTexto.toIntOrNull() ?: 0) > 0
 
     fun resetFormNuevo() {
         _formNuevoState.value = FormNuevoTrasladoState()
@@ -162,18 +162,18 @@ class TrasladoViewModel(application: Application) : AndroidViewModel(application
     // ── Validación Centralizada: Finalizar Traslado (IE 2.2.1) ─────────────────
     fun onFinalizarKmLlegadaCambiado(kmSalida: Int, llegadaTexto: String) {
         if (!llegadaTexto.all { it.isDigit() }) return
-        val llegadaInt = llegadaTexto.toIntOrNull()
+        val kmLlegadaNumero = llegadaTexto.toIntOrNull()
         val error = when {
             llegadaTexto.isBlank() -> null
-            llegadaInt == null || llegadaInt <= kmSalida -> "Debe ser mayor al odómetro inicial ($kmSalida km)"
+            kmLlegadaNumero == null || kmLlegadaNumero <= kmSalida -> "Debe ser mayor al odómetro inicial ($kmSalida km)"
             else -> null
         }
-        val recorridos = if (llegadaInt != null && llegadaInt > kmSalida) llegadaInt - kmSalida else 0
+        val kmRecorridosCalculados = if (kmLlegadaNumero != null && kmLlegadaNumero > kmSalida) kmLlegadaNumero - kmSalida else 0
         _formFinalizarState.value = FormFinalizarState(
             kmLlegadaTexto = llegadaTexto,
             errorKmLlegada = error,
-            kmRecorridos = recorridos,
-            esValido = error == null && llegadaTexto.isNotBlank() && recorridos > 0
+            kmRecorridos = kmRecorridosCalculados,
+            esValido = error == null && llegadaTexto.isNotBlank() && kmRecorridosCalculados > 0
         )
     }
 
@@ -202,12 +202,12 @@ class TrasladoViewModel(application: Application) : AndroidViewModel(application
         viewModelScope.launch {
             _cargando.value = true
             try {
-                val activo = repository.getTrasladoActivo(tecnicoId)
-                if (activo != null) {
+                val trasladoEnCurso = repositorio.getTrasladoActivo(tecnicoId)
+                if (trasladoEnCurso != null) {
                     _mensaje.value = "Ya tienes un traslado en curso"
                     return@launch
                 }
-                repository.iniciarTraslado(Traslado(
+                repositorio.iniciarTraslado(Traslado(
                     tecnicoId  = tecnicoId,
                     vehiculoId = vehiculoId,
                     destinoId  = destinoId,
@@ -234,17 +234,17 @@ class TrasladoViewModel(application: Application) : AndroidViewModel(application
             _cargando.value = true
             try {
                 val kmRecorridos = kmLlegada - traslado.kmSalida
-                val (total, combustible, peajes) = repository.calcularCostos(
+                val (costoTotal, costoCombustible, costoPeajes) = repositorio.calcularCostos(
                     kmRecorridos   = kmRecorridos,
                     peajesPagados  = peajesPagados
                 )
-                repository.finalizarTraslado(traslado.copy(
+                repositorio.finalizarTraslado(traslado.copy(
                     kmLlegada           = kmLlegada,
                     peajesPagados       = peajesPagados.joinToString(","),
                     justificacionDesvio = justificacion,
-                    costoTotal          = total,
-                    costoCombustible    = combustible,
-                    costoPeajes         = peajes
+                    costoTotal          = costoTotal,
+                    costoCombustible    = costoCombustible,
+                    costoPeajes         = costoPeajes
                 ))
                 _formFinalizarState.value = FormFinalizarState()
                 _mensaje.value = "✅ Traslado finalizado exitosamente"
@@ -258,14 +258,14 @@ class TrasladoViewModel(application: Application) : AndroidViewModel(application
 
     fun aprobarTraslado(trasladoId: Int, comentario: String = "Aprobado") {
         viewModelScope.launch {
-            repository.aprobarTraslado(trasladoId, comentario)
+            repositorio.aprobarTraslado(trasladoId, comentario)
             _mensaje.value = "✅ Traslado aprobado"
         }
     }
 
     fun ajustarAKmOficial(trasladoId: Int, kmOficial: Int, comentario: String) {
         viewModelScope.launch {
-            repository.ajustarAKmOficial(trasladoId, kmOficial, comentario)
+            repositorio.ajustarAKmOficial(trasladoId, kmOficial, comentario)
             _mensaje.value = "⚠️ Ajustado a Km oficial"
         }
     }

@@ -39,22 +39,22 @@ fun NuevoTrasladoScreen(
     val cargando  by viewModel.cargando.collectAsState()
 
     // Estado centralizado y validado en el ViewModel (MVVM)
-    val formState by viewModel.formNuevoState.collectAsState()
+    val estadoFormulario by viewModel.formNuevoState.collectAsState()
 
     var expandirDestino  by remember { mutableStateOf(false) }
     var expandirVehiculo by remember { mutableStateOf(false) }
 
-    val snackbarHostState = remember { SnackbarHostState() }
+    val estadoSnackbar = remember { SnackbarHostState() }
     LaunchedEffect(mensaje) {
         mensaje?.let {
-            snackbarHostState.showSnackbar(it)
+            estadoSnackbar.showSnackbar(it)
             viewModel.limpiarMensaje()
             if (it.startsWith("✅")) onVolver()
         }
     }
 
     Scaffold(
-        snackbarHost = { SnackbarHost(snackbarHostState) },
+        snackbarHost = { SnackbarHost(estadoSnackbar) },
         topBar = {
             TopAppBar(
                 title          = { Text("Nuevo Traslado", fontWeight = FontWeight.Bold) },
@@ -87,7 +87,7 @@ fun NuevoTrasladoScreen(
                 onExpandedChange = { expandirDestino = it }
             ) {
                 OutlinedTextField(
-                    value            = formState.destinoSeleccionado?.nombre ?: "Selecciona clínica / hospital",
+                    value            = estadoFormulario.destinoSeleccionado?.nombre ?: "Selecciona clínica / hospital",
                     onValueChange    = {},
                     readOnly         = true,
                     label            = { Text("Destino") },
@@ -124,7 +124,7 @@ fun NuevoTrasladoScreen(
                 onExpandedChange = { expandirVehiculo = it }
             ) {
                 OutlinedTextField(
-                    value            = formState.vehiculoSeleccionado?.let { "${it.marca} ${it.modelo} · ${it.patente}" }
+                    value            = estadoFormulario.vehiculoSeleccionado?.let { "${it.marca} ${it.modelo} · ${it.patente}" }
                                        ?: "Selecciona vehículo",
                     onValueChange    = {},
                     readOnly         = true,
@@ -158,7 +158,7 @@ fun NuevoTrasladoScreen(
             // ── 3. Odómetro de salida (Validado en ViewModel - IE 2.2.1) ───────
             Text("3. Odómetro de Salida", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
             OutlinedTextField(
-                value           = formState.kmSalidaTexto,
+                value           = estadoFormulario.kmSalidaTexto,
                 onValueChange   = { viewModel.onNuevoKmSalidaCambiado(it) },
                 label           = { Text("Kilómetros actuales del vehículo") },
                 leadingIcon     = { Icon(Icons.Default.Speed, contentDescription = null) },
@@ -166,13 +166,13 @@ fun NuevoTrasladoScreen(
                 modifier        = Modifier.fillMaxWidth(),
                 singleLine      = true,
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                isError         = formState.errorKmSalida != null,
+                isError         = estadoFormulario.errorKmSalida != null,
                 supportingText  = {
-                    formState.errorKmSalida?.let {
+                    estadoFormulario.errorKmSalida?.let {
                         Text(it, color = RojoDesviacion)
                     }
                 },
-                placeholder     = { Text(formState.vehiculoSeleccionado?.kmActual?.toString() ?: "Ej: 45230") }
+                placeholder     = { Text(estadoFormulario.vehiculoSeleccionado?.kmActual?.toString() ?: "Ej: 45230") }
             )
 
             Spacer(modifier = Modifier.height(8.dp))
@@ -180,19 +180,19 @@ fun NuevoTrasladoScreen(
             // ── Botón Iniciar Traslado ─────────────────────────────────────────
             Button(
                 onClick  = {
-                    formState.destinoSeleccionado?.let { destino ->
-                        formState.vehiculoSeleccionado?.let { vehiculo ->
+                    estadoFormulario.destinoSeleccionado?.let { destino ->
+                        estadoFormulario.vehiculoSeleccionado?.let { vehiculo ->
                             viewModel.iniciarTraslado(
                                 tecnicoId  = usuario.id,
                                 vehiculoId = vehiculo.id,
                                 destinoId  = destino.id,
-                                kmSalida   = formState.kmSalidaTexto.toInt()
+                                kmSalida   = estadoFormulario.kmSalidaTexto.toInt()
                             )
                         }
                     }
                 },
                 modifier = Modifier.fillMaxWidth().height(56.dp),
-                enabled  = formState.esValido && !cargando,
+                enabled  = estadoFormulario.esValido && !cargando,
                 shape    = RoundedCornerShape(14.dp),
                 colors   = ButtonDefaults.buttonColors(containerColor = AzulPrimario)
             ) {

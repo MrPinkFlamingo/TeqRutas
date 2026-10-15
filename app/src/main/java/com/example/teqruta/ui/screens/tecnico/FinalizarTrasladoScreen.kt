@@ -56,7 +56,7 @@ fun FinalizarTrasladoScreen(
     viewModel:  TrasladoViewModel,
     onVolver:   () -> Unit
 ) {
-    val context = LocalContext.current
+    val contexto = LocalContext.current
 
     // Obtener el traslado desde la lista reactiva
     val traslados by viewModel.todosLosTraslados.collectAsState()
@@ -66,25 +66,25 @@ fun FinalizarTrasladoScreen(
     val cargando by viewModel.cargando.collectAsState()
 
     // Estado de validación centralizado en el ViewModel (MVVM - IE 2.2.1)
-    val formFinalizarState by viewModel.formFinalizarState.collectAsState()
+    val estadoFormulario by viewModel.formFinalizarState.collectAsState()
 
     var justificacion       by remember { mutableStateOf("") }
     val peajesSeleccionados = remember { mutableStateListOf<String>() }
 
     // ── RECURSO NATIVO 1: CÁMARA (IE 2.4.1) ───────────────────────────────────
     var fotoBitmap by remember { mutableStateOf<Bitmap?>(null) }
-    val launcherCamara = rememberLauncherForActivityResult(
+    val lanzadorCamara = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.TakePicturePreview()
     ) { bitmap: Bitmap? ->
         if (bitmap != null) {
             fotoBitmap = bitmap
         }
     }
-    val launcherPermisoCamara = rememberLauncherForActivityResult(
+    val lanzadorPermisoCamara = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.RequestPermission()
     ) { concedido ->
         if (concedido) {
-            launcherCamara.launch(null)
+            lanzadorCamara.launch(null)
         }
     }
 
@@ -92,13 +92,13 @@ fun FinalizarTrasladoScreen(
     var coordenadasGps by remember { mutableStateOf<String?>(null) }
 
     fun capturarGps() {
-        val locationManager = context.getSystemService(Context.LOCATION_SERVICE) as? LocationManager
-        val permisoGps = ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
-        if (permisoGps && locationManager != null) {
-            val loc = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER)
-                ?: locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER)
-            coordenadasGps = if (loc != null) {
-                "Lat: ${"%.4f".format(loc.latitude)}, Lon: ${"%.4f".format(loc.longitude)}"
+        val gestorUbicacion = contexto.getSystemService(Context.LOCATION_SERVICE) as? LocationManager
+        val tienePermisoGps = ContextCompat.checkSelfPermission(contexto, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
+        if (tienePermisoGps && gestorUbicacion != null) {
+            val ubicacion = gestorUbicacion.getLastKnownLocation(LocationManager.GPS_PROVIDER)
+                ?: gestorUbicacion.getLastKnownLocation(LocationManager.NETWORK_PROVIDER)
+            coordenadasGps = if (ubicacion != null) {
+                "Lat: ${"%.4f".format(ubicacion.latitude)}, Lon: ${"%.4f".format(ubicacion.longitude)}"
             } else {
                 "Lat: -36.8269, Lon: -73.0497 (GPS Terreno)"
             }
@@ -107,7 +107,7 @@ fun FinalizarTrasladoScreen(
         }
     }
 
-    val launcherPermisoGps = rememberLauncherForActivityResult(
+    val lanzadorPermisoGps = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.RequestPermission()
     ) { concedido ->
         if (concedido) {
@@ -122,17 +122,17 @@ fun FinalizarTrasladoScreen(
         listOf("Peaje Autopista Concepción", "Peaje Ruta 5 Sur", "Peaje Acceso Norte")
     }
 
-    val snackbarHostState = remember { SnackbarHostState() }
+    val estadoSnackbar = remember { SnackbarHostState() }
     LaunchedEffect(mensaje) {
         mensaje?.let {
-            snackbarHostState.showSnackbar(it)
+            estadoSnackbar.showSnackbar(it)
             viewModel.limpiarMensaje()
             if (it.startsWith("✅")) onVolver()
         }
     }
 
     Scaffold(
-        snackbarHost = { SnackbarHost(snackbarHostState) },
+        snackbarHost = { SnackbarHost(estadoSnackbar) },
         topBar = {
             TopAppBar(
                 title          = { Text("Finalizar Traslado", fontWeight = FontWeight.Bold) },
@@ -160,7 +160,7 @@ fun FinalizarTrasladoScreen(
             return@Scaffold
         }
 
-        val kmRecorridos = formFinalizarState.kmRecorridos
+        val kmRecorridos = estadoFormulario.kmRecorridos
 
         Column(
             modifier = Modifier
@@ -191,7 +191,7 @@ fun FinalizarTrasladoScreen(
             // ── Odómetro de llegada (Validación en ViewModel - IE 2.2.1) ───────
             Text("Odómetro de Llegada", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
             OutlinedTextField(
-                value           = formFinalizarState.kmLlegadaTexto,
+                value           = estadoFormulario.kmLlegadaTexto,
                 onValueChange   = { viewModel.onFinalizarKmLlegadaCambiado(traslado.kmSalida, it) },
                 label           = { Text("Kilómetros al llegar") },
                 leadingIcon     = { Icon(Icons.Default.Speed, contentDescription = null) },
@@ -199,9 +199,9 @@ fun FinalizarTrasladoScreen(
                 modifier        = Modifier.fillMaxWidth(),
                 singleLine      = true,
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                isError         = formFinalizarState.errorKmLlegada != null,
+                isError         = estadoFormulario.errorKmLlegada != null,
                 supportingText  = {
-                    formFinalizarState.errorKmLlegada?.let {
+                    estadoFormulario.errorKmLlegada?.let {
                         Text(it, color = RojoDesviacion)
                     }
                 }
@@ -230,10 +230,10 @@ fun FinalizarTrasladoScreen(
                         // Botón Cámara Nativa
                         OutlinedButton(
                             onClick = {
-                                if (ContextCompat.checkSelfPermission(context, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
-                                    launcherCamara.launch(null)
+                                if (ContextCompat.checkSelfPermission(contexto, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
+                                    lanzadorCamara.launch(null)
                                 } else {
-                                    launcherPermisoCamara.launch(Manifest.permission.CAMERA)
+                                    lanzadorPermisoCamara.launch(Manifest.permission.CAMERA)
                                 }
                             },
                             modifier = Modifier.weight(1f)
@@ -246,10 +246,10 @@ fun FinalizarTrasladoScreen(
                         // Botón GPS Nativo
                         OutlinedButton(
                             onClick = {
-                                if (ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+                                if (ContextCompat.checkSelfPermission(contexto, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
                                     capturarGps()
                                 } else {
-                                    launcherPermisoGps.launch(Manifest.permission.ACCESS_FINE_LOCATION)
+                                    lanzadorPermisoGps.launch(Manifest.permission.ACCESS_FINE_LOCATION)
                                 }
                             },
                             modifier = Modifier.weight(1f)
@@ -370,13 +370,13 @@ fun FinalizarTrasladoScreen(
                     }
                     viewModel.finalizarTraslado(
                         traslado       = traslado,
-                        kmLlegada      = formFinalizarState.kmLlegadaTexto.toInt(),
+                        kmLlegada      = estadoFormulario.kmLlegadaTexto.toInt(),
                         peajesPagados  = peajesSeleccionados.toList(),
                         justificacion  = justificacionCompleta
                     )
                 },
                 modifier = Modifier.fillMaxWidth().height(56.dp),
-                enabled  = formFinalizarState.esValido && !cargando,
+                enabled  = estadoFormulario.esValido && !cargando,
                 shape    = RoundedCornerShape(14.dp),
                 colors   = ButtonDefaults.buttonColors(containerColor = VerdeSincronizado)
             ) {
@@ -404,6 +404,6 @@ private fun FilaResumen(etiqueta: String, valor: String) {
 }
 
 private fun formatearFechaFin(timestamp: Long): String {
-    val sdf = SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault())
-    return sdf.format(Date(timestamp))
+    val formateadorFecha = SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault())
+    return formateadorFecha.format(Date(timestamp))
 }

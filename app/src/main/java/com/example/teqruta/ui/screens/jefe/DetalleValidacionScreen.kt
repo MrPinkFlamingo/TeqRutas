@@ -262,7 +262,7 @@ fun DetalleValidacionScreen(
 }
 
 @Composable
-private fun ItemCosto(label: String, monto: Double, esTotal: Boolean = false) {
+private fun ItemCosto(etiqueta: String, monto: Double, esTotal: Boolean = false) {
     val formatoClp = NumberFormat.getCurrencyInstance(Locale("es", "CL")).apply {
         maximumFractionDigits = 0
     }
@@ -273,7 +273,7 @@ private fun ItemCosto(label: String, monto: Double, esTotal: Boolean = false) {
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
         Text(
-            text = label,
+            text = etiqueta,
             style = if (esTotal) MaterialTheme.typography.titleMedium else MaterialTheme.typography.bodyMedium,
             fontWeight = if (esTotal) FontWeight.Bold else FontWeight.Normal
         )
@@ -287,6 +287,6 @@ private fun ItemCosto(label: String, monto: Double, esTotal: Boolean = false) {
 }
 
 private fun formatearFechaHora(timestamp: Long): String {
-    val sdf = SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault())
-    return sdf.format(Date(timestamp))
+    val formateadorFecha = SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault())
+    return formateadorFecha.format(Date(timestamp))
 }

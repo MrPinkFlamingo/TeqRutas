@@ -247,6 +247,6 @@ fun TarjetaTrasladoHistorial(traslado: Traslado) {
 }
 
 private fun formatearFecha(timestamp: Long): String {
-    val sdf = SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault())
-    return sdf.format(Date(timestamp))
+    val formateadorFecha = SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault())
+    return formateadorFecha.format(Date(timestamp))
 }

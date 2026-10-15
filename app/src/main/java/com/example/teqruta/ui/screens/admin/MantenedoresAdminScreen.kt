@@ -33,22 +33,22 @@ fun MantenedoresAdminScreen(
 ) {
     val vehiculos by viewModel.vehiculos.collectAsState()
     val destinos by viewModel.destinos.collectAsState()
-    val adminState by viewModel.adminState.collectAsState()
+    val estadoAdmin by viewModel.adminState.collectAsState()
     val mensaje by viewModel.mensaje.collectAsState()
 
     var pestanaSeleccionada by remember { mutableStateOf(0) }
     val titulosPestanas = listOf("Vehículos", "Clínicas y Tramos")
 
-    val snackbarHostState = remember { SnackbarHostState() }
+    val estadoSnackbar = remember { SnackbarHostState() }
     LaunchedEffect(mensaje) {
         mensaje?.let {
-            snackbarHostState.showSnackbar(it)
+            estadoSnackbar.showSnackbar(it)
             viewModel.limpiarMensaje()
         }
     }
 
     Scaffold(
-        snackbarHost = { SnackbarHost(snackbarHostState) },
+        snackbarHost = { SnackbarHost(estadoSnackbar) },
         topBar = {
             TopAppBar(
                 title = {
@@ -100,7 +100,7 @@ fun MantenedoresAdminScreen(
                         }
                         Spacer(modifier = Modifier.height(4.dp))
                         Text(
-                            text = "$${adminState.precioCombustible.toInt()} CLP / Litro (Diesel)",
+                            text = "$${estadoAdmin.precioCombustible.toInt()} CLP / Litro (Diesel)",
                             style = MaterialTheme.typography.titleMedium,
                             fontWeight = FontWeight.Bold
                         )
@@ -117,9 +117,9 @@ fun MantenedoresAdminScreen(
                                 viewModel.actualizarTarifaCombustibleDesdeApi()
                             }
                         },
-                        enabled = estaOnline && !adminState.actualizandoTarifa
+                        enabled = estaOnline && !estadoAdmin.actualizandoTarifa
                     ) {
-                        if (adminState.actualizandoTarifa) {
+                        if (estadoAdmin.actualizandoTarifa) {
                             CircularProgressIndicator(
                                 modifier = Modifier.size(22.dp),
                                 strokeWidth = 2.dp,

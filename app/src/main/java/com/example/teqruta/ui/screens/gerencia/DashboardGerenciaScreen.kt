@@ -36,7 +36,7 @@ fun DashboardGerenciaScreen(
     estaOnline: Boolean,
     onLogout: () -> Unit
 ) {
-    val dashboardState by viewModel.dashboardUiState.collectAsState()
+    val estadoDashboard by viewModel.dashboardUiState.collectAsState()
     val destinos by viewModel.destinos.collectAsState()
     val vehiculos by viewModel.vehiculos.collectAsState()
 
@@ -48,19 +48,19 @@ fun DashboardGerenciaScreen(
         }
     }
 
-    val snackbarHostState = remember { SnackbarHostState() }
-    val coroutineScope = rememberCoroutineScope()
+    val estadoSnackbar = remember { SnackbarHostState() }
+    val alcanceCorrutina = rememberCoroutineScope()
     var exportandoMensaje by remember { mutableStateOf(false) }
 
     LaunchedEffect(exportandoMensaje) {
         if (exportandoMensaje) {
-            snackbarHostState.showSnackbar("Respaldo exportado exitosamente a CSV / Excel.")
+            estadoSnackbar.showSnackbar("Respaldo exportado exitosamente a CSV / Excel.")
             exportandoMensaje = false
         }
     }
 
     Scaffold(
-        snackbarHost = { SnackbarHost(snackbarHostState) },
+        snackbarHost = { SnackbarHost(estadoSnackbar) },
         topBar = {
             TopAppBar(
                 title = {
@@ -115,7 +115,7 @@ fun DashboardGerenciaScreen(
                             expanded = expandirFiltroVehiculo,
                             onExpandedChange = { expandirFiltroVehiculo = it }
                         ) {
-                            val vehiculoTexto = vehiculos.firstOrNull { it.id == dashboardState.filtroVehiculoId }?.patente ?: "Todos"
+                            val vehiculoTexto = vehiculos.firstOrNull { it.id == estadoDashboard.filtroVehiculoId }?.patente ?: "Todos"
                             OutlinedButton(
                                 onClick = { expandirFiltroVehiculo = true },
                                 modifier = Modifier.menuAnchor()
@@ -159,7 +159,7 @@ fun DashboardGerenciaScreen(
                         Text("Gasto Total Acumulado", style = MaterialTheme.typography.titleMedium, color = AzulPrimario)
                         Spacer(modifier = Modifier.height(4.dp))
                         Text(
-                            text = formatoClp.format(dashboardState.totalGeneral),
+                            text = formatoClp.format(estadoDashboard.totalGeneral),
                             style = MaterialTheme.typography.headlineLarge,
                             fontWeight = FontWeight.Bold,
                             color = AzulPrimario
@@ -167,7 +167,7 @@ fun DashboardGerenciaScreen(
                         Spacer(modifier = Modifier.height(14.dp))
 
                         // Barra visual comparativa de proporción
-                        val porcentajeCombustible = dashboardState.porcentajeCombustible
+                        val porcentajeCombustible = estadoDashboard.porcentajeCombustible
                         Row(
                             modifier = Modifier
                                 .fillMaxWidth()
@@ -195,11 +195,11 @@ fun DashboardGerenciaScreen(
                         ) {
                             Column {
                                 Text("Combustible (Azul)", style = MaterialTheme.typography.labelMedium)
-                                Text(formatoClp.format(dashboardState.totalCombustible), fontWeight = FontWeight.Bold)
+                                Text(formatoClp.format(estadoDashboard.totalCombustible), fontWeight = FontWeight.Bold)
                             }
                             Column(horizontalAlignment = Alignment.End) {
                                 Text("Peajes (Naranja)", style = MaterialTheme.typography.labelMedium)
-                                Text(formatoClp.format(dashboardState.totalPeajes), fontWeight = FontWeight.Bold)
+                                Text(formatoClp.format(estadoDashboard.totalPeajes), fontWeight = FontWeight.Bold)
                             }
                         }
                     }
@@ -225,20 +225,20 @@ fun DashboardGerenciaScreen(
             // ── Título lista de traslados auditados ───────────────────────────
             item {
                 Text(
-                    text = "Detalle de Traslados (${dashboardState.trasladosFiltrados.size})",
+                    text = "Detalle de Traslados (${estadoDashboard.trasladosFiltrados.size})",
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.Bold
                 )
             }
 
-            if (dashboardState.trasladosFiltrados.isEmpty()) {
+            if (estadoDashboard.trasladosFiltrados.isEmpty()) {
                 item {
                     Text("No hay registros bajo los filtros seleccionados.", color = GrisMedio)
                 }
             } else {
-                items(dashboardState.trasladosFiltrados, key = { it.id }) { traslado ->
-                    val dest = destinos.firstOrNull { it.id == traslado.destinoId }
-                    val veh = vehiculos.firstOrNull { it.id == traslado.vehiculoId }
+                items(estadoDashboard.trasladosFiltrados, key = { it.id }) { traslado ->
+                    val destino = destinos.firstOrNull { it.id == traslado.destinoId }
+                    val vehiculo = vehiculos.firstOrNull { it.id == traslado.vehiculoId }
                     Card(
                         shape = RoundedCornerShape(10.dp),
                         colors = CardDefaults.cardColors(containerColor = Blanco),
@@ -252,8 +252,8 @@ fun DashboardGerenciaScreen(
                             verticalAlignment = Alignment.CenterVertically
                         ) {
                             Column {
-                                Text(dest?.nombre ?: "Destino #${traslado.destinoId}", fontWeight = FontWeight.Bold)
-                                Text("Vehículo: ${veh?.patente ?: "-"} · ${traslado.estado.name}", style = MaterialTheme.typography.bodyMedium, color = GrisMedio)
+                                Text(destino?.nombre ?: "Destino #${traslado.destinoId}", fontWeight = FontWeight.Bold)
+                                Text("Vehículo: ${vehiculo?.patente ?: "-"} · ${traslado.estado.name}", style = MaterialTheme.typography.bodyMedium, color = GrisMedio)
                             }
                             Text(
                                 text = formatoClp.format(traslado.costoTotal ?: 0.0),

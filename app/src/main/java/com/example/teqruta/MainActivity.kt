@@ -25,10 +25,10 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             TeqRutaTheme {
-                val networkObserver = remember { NetworkObserver(applicationContext) }
-                val estaOnline by networkObserver.estaConectado.collectAsState(initial = true)
+                val observadorRed = remember { NetworkObserver(applicationContext) }
+                val estaOnline by observadorRed.estaConectado.collectAsState(initial = true)
 
-                val navController = rememberNavController()
+                val controladorNavegacion = rememberNavController()
                 val authViewModel: AuthViewModel = viewModel()
                 val trasladoViewModel: TrasladoViewModel = viewModel()
 
@@ -37,7 +37,7 @@ class MainActivity : ComponentActivity() {
                     color = GrisClaro
                 ) {
                     AppNavGraph(
-                        navController = navController,
+                        controladorNavegacion = controladorNavegacion,
                         authViewModel = authViewModel,
                         trasladoViewModel = trasladoViewModel,
                         estaOnline = estaOnline

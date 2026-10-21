@@ -4,6 +4,14 @@ Empresa: TEQMED SpA - Concepcion, Chile
 Asignatura: Aplicaciones Moviles (DSY1105) - Evaluacion Parcial 2  
 Arquitectura: Android Nativo, Kotlin, Jetpack Compose, MVVM, Room 2.7.2, DataStore  
 
+## Datos de la Entrega y Equipo
+- Asignatura: Desarrollo de Aplicaciones Moviles (DSY1105)
+- Evaluacion: Evaluacion Parcial 2 (Ponderacion 8%)
+- Estudiantes:
+  - Carlos [Apellido]
+  - [Nombre del Companero/a de equipo]
+- Planificacion del Proyecto (Trello / Gestion agil): [Ingresar enlace al tablero Trello]
+
 ## 1. Descripcion del Proyecto
 
 TeqRuta es una aplicacion movil Android desarrollada para registrar, calcular costos y auditar los traslados que realizan los tecnicos de mantenimiento de equipamiento medico de TEQMED SpA.

@@ -6,7 +6,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.*
@@ -61,7 +61,7 @@ fun DetalleValidacionScreen(
                 title = { Text("Resolución de Viaje", fontWeight = FontWeight.Bold) },
                 navigationIcon = {
                     IconButton(onClick = onVolver) {
-                        Icon(Icons.Default.ArrowBack, contentDescription = "Volver")
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Volver")
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
@@ -181,7 +181,7 @@ fun DetalleValidacionScreen(
                     Spacer(modifier = Modifier.height(10.dp))
                     ItemCosto("Costo Combustible Estimado", traslado.costoCombustible ?: (kmDeclarados * 150.0))
                     ItemCosto("Costo Peajes (${if (traslado.peajesPagados.isBlank()) 0 else traslado.peajesPagados.split(",").size} pagados)", traslado.costoPeajes ?: 0.0)
-                    Divider(modifier = Modifier.padding(vertical = 8.dp), color = GrisBorde)
+                    HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp), color = GrisBorde)
                     ItemCosto("Total Estimado", traslado.costoTotal ?: ((kmDeclarados * 150.0) + (traslado.costoPeajes ?: 0.0)), esTotal = true)
                 }
             }
@@ -263,7 +263,7 @@ fun DetalleValidacionScreen(
 
 @Composable
 private fun ItemCosto(etiqueta: String, monto: Double, esTotal: Boolean = false) {
-    val formatoClp = NumberFormat.getCurrencyInstance(Locale("es", "CL")).apply {
+    val formatoClp = NumberFormat.getCurrencyInstance(Locale.forLanguageTag("es-CL")).apply {
         maximumFractionDigits = 0
     }
     Row(

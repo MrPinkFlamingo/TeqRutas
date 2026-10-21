@@ -7,8 +7,8 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.Logout
 import androidx.compose.material.icons.filled.CheckCircle
-import androidx.compose.material.icons.filled.Logout
 import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -60,7 +60,7 @@ fun HomeJefeScreen(
                     BadgeConexion(estaOnline = estaOnline)
                     Spacer(modifier = Modifier.width(8.dp))
                     IconButton(onClick = onLogout) {
-                        Icon(Icons.Default.Logout, contentDescription = "Cerrar sesión")
+                        Icon(Icons.AutoMirrored.Filled.Logout, contentDescription = "Cerrar sesión")
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
@@ -195,7 +195,7 @@ fun TarjetaValidacionJefe(
             )
 
             Spacer(modifier = Modifier.height(12.dp))
-            Divider(color = GrisBorde)
+            HorizontalDivider(color = GrisBorde)
             Spacer(modifier = Modifier.height(12.dp))
 
             // Comparativa de Kilómetros
